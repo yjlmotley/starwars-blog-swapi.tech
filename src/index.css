@@ -1,0 +1,46 @@
+#cardDiv{
+    width: 78%;
+
+}
+.card{
+    min-width: 18rem;
+}
+
+h1{
+    align-self: flex-start;
+    margin-left: 15%;
+    color: rgb(219, 0, 0);
+}
+#cardDiv{
+    width: 70%;
+    overflow-y: hidden !important;
+    margin: 0 auto;
+}
+.card{
+    min-width: 16rem;
+    margin: 5px;
+}
+
+body, html {
+    background-color: black;
+}
+
+.btn-heart:hover {
+    .heartBtn {
+        color: rgb(219, 0, 0) !important;
+    }
+}
+
+#cardBody p {
+    margin-bottom: 8px;
+}
+
+
+.fa-trash-can {
+    margin-left: 10px;
+}
+
+.fa-trash-can:hover {
+    cursor: pointer;
+    color: rgb(219, 0, 0);
+}
