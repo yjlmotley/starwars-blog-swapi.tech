@@ -1,22 +1,14 @@
 
-import React, { useState, useContext } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-// import { Context } from "../store/appContext";
 import useGlobalReducer from "../hooks/useGlobalReducer";  // Custom hook for accessing the global state.
 
-import tatooineImg from "../../img/tatooine.jpg";
-import bespinImg from "../../img/bespin.jpg";
-import emptyPicImg from "../../img/star-wars-empty.jpg";
-
-// addToFavorites function is called when clicking on the heart icon. This function is going to add that item to the store.favorites.
-// Inside of the same functions have a way to delete the favorite if it is already a favorite.
-// for the <h5> tags bring in item.name variable. for the <p> use ternary operator depending on what the category is.
-// card button group div linked to the details page, button for icon for add to favorites
+import tatooineImg from "../assets/img/tatooine.jpg";
+import bespinImg from "../assets/img/bespin.jpg";
+import emptyPicImg from "../assets/img/star-wars-empty.jpg";
 
 
-
-const Card = ({ item, index, category }) => {
-    // const { store, actions } = useContext(Context);
+export const Card = ({ item, index, category }) => {
     const { store, dispatch } = useGlobalReducer();
     const [imgErr, setImgErr] = useState(false);
 
@@ -25,48 +17,67 @@ const Card = ({ item, index, category }) => {
     }
 
     const GUIDE_URL = "https://starwars-visualguide.com/assets/img/";
+    // If the guide url is working, use this getImgUrl
+    // const getImgUrl = () => {
+    //     if (imgErr && item.name === "Tatooine") {
+    //         return tatooineImg;
+    //     } else if (item.name === "Bespin") {
+    //         return bespinImg;
+    //     } else if (category === "starships") {
+    //         return store.starshipImages[index] || emptyPicImg;
+    //     } return `${GUIDE_URL}${category}/${index + 1}.jpg`
+    // }
+    
+    // Use this getImgUrl function if starwars-visualguide.com is not working
     const getImgUrl = () => {
-        if (imgErr && item.name === "Tatooine") {
-            return tatooineImg;
-        } else if (item.name === "Bespin") {
-            return bespinImg;
-        } else if (category === "starships") {
-            return store.starshipImages[index] || emptyPicImg;
-        } return `${GUIDE_URL}${category}/${index + 1}.jpg`
+        if (category === "characters") {
+            return store.characterImages[index] || emptyPicImg;
+        } else if (category === "planets") {
+            return store.planetImages[index] || emptyPicImg;
+        } return store.starshipImages[index] || emptyPicImg;
     }
+
+    // This getImgUrl function is to use the backup store if there is an imgErr but this function is too slow
+    // const getImgUrl = () => {
+    //     if (imgErr && category === "characters") {
+    //         return store.characterImages[index] || emptyPicImg;
+    //     } else if (imgErr && category === "planets") {
+    //         return store.planetImages[index] || emptyPicImg;
+    //     } else if (category === "starships") {
+    //         return store.starshipImages[index] || emptyPicImg;
+    //     } return `${GUIDE_URL}${category}/${index + 1}.jpg`
+    // }
+    
     const imgStyle = {
-        height: category === "starships" ? "180px" :
+        height: category === "characters" ? "338px" :
+            category === "starships" ? "180px" :
             category === "planets" ? "254px" :
                 "auto",
     };
 
     const isFavorite = store.favorites.some(fav => fav.name === item.name && fav.category === category)
-    // const handleFavorites = () => {
-    //     const isFavorite = store.favorites.some(fav => fav.name === item.name && fav.category === category)
-    //     if (isFavorite) {
-    //         const indexToDelete = store.favorites.findIndex(fav => fav.name === item.name && fav.category === category)
-    //         if (indexToDelete !== -1) {
-    //             actions.deleteFavorites(indexToDelete)
-    //         }
-    //     } else {
-    //         actions.addFavorites({ name: item.name, index, category })
-    //     }
-    // }
-    const handleFavorites = () => {
-        const favoriteItem = { name: item.name, index, category };
 
+    const handleFavorites = () => {
         if (isFavorite) {
-            dispatch({
-                type: "delete_favorite",
-                payload: favoriteItem
-            });
+            const favoriteIndex = store.favorites.findIndex(
+                fav => fav.name === item.name && fav.category === category
+            );
+            
+            // Only dispatch if we found a valid index
+            if (favoriteIndex !== -1) {
+                dispatch({
+                    type: "delete_favorite",
+                    payload: favoriteIndex 
+                });
+            }
         } else {
             dispatch({
                 type: "add_favorite",
-                payload: favoriteItem
+                payload: { name: item.name, index, category }
             });
         }
-    }
+    };
+
     return (
 
         <div className="card" >
@@ -107,10 +118,5 @@ const Card = ({ item, index, category }) => {
         </div>
 
     );
-
-
-
-
 };
 
-export default Card
